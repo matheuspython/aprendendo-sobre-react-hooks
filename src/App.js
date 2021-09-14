@@ -1,30 +1,42 @@
-import { useState, useEfect } from 'react'
+import { useState, useEffect } from 'react'
 
 function App() {
-  const [repositories, setRepositories ] = useState([
-    {id: 1, name: 'repo-1'},
-    {id: 2, name: 'repo-2'},
-    {id: 3, name: 'repo-3'},
-  ])
+  const [repositories, setRepositories ] = useState([])
 
-  function handleAddRepository(){
-    setRepositories([...repositories, {
-      id:Math.random(),
-      name: 'novo repo'
-    }])
+  useEffect(async () => {
+    const response = await fetch('https://api.github.com/users/matheuspython/repos')
+    const data = await response.json()
+
+    setRepositories(data)
+    console.log(data)
+  }, [])
+
+  useEffect(()=> {
+   const favorites = repositories.filter(repo => repo.favorite)
+   document.title = `${favorites.length} repositorios favoritados`
+  },[repositories])//sempre que o repositories mudar vai executar esse hook
+
+  function handleFavorite(id) {
+    const newRepositories = repositories.map(repo =>{
+      return repo.id === id ? {...repo, favorite: !repo.favorite} : repo
+    })
+
+    setRepositories(newRepositories)
+
   }
-
  
   return (
     <>
       <ul>
         {
-          repositories.map(repo => <li key={repo.id}> {repo.name} </li>)
-        }
+          repositories.map(repo => (
+            <li key={repo.id}>
+               {repo.name} 
+               {repo.favorite && <span>(favorito)</span>}
+               <button onClick={() => handleFavorite(repo.id)}>favoritar</button>
+            </li>
+      ))}
       </ul>
-      <button onClick={handleAddRepository}>
-        Adicionar repositórios{}
-      </button>
     </>
 
   );
