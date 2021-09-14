@@ -7,13 +7,26 @@ function App() {
     {id: 3, name: 'repo-3'},
   ])
 
+  function handleAddRepository(){
+    setRepositories([...repositories, {
+      id:Math.random(),
+      name: 'novo repo'
+    }])
+  }
+
  
   return (
-    <ul>
-      {
-        repositories.map(repo => <li key={repo.id}> {repo.name} </li>)
-      }
-    </ul>
+    <>
+      <ul>
+        {
+          repositories.map(repo => <li key={repo.id}> {repo.name} </li>)
+        }
+      </ul>
+      <button onClick={handleAddRepository}>
+        Adicionar repositórios{}
+      </button>
+    </>
+
   );
 }
 
